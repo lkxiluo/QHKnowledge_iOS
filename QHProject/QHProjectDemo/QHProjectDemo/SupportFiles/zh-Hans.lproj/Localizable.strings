@@ -1,0 +1,16 @@
+/* 
+  Localizable.strings
+  国际化多语言配置
+
+  Created by 罗坤 on 2021/11/5.
+  
+*/
+
+"Gree_Tabbar_Home" = "首页";
+"Gree_Tabbar_Category" = "分类";
+"Gree_Tabbar_Community" = "社区";
+"Gree_Tabbar_ShopCart" = "购物车";
+"Gree_Tabbar_Mine" = "我的";
+
+"Gree_Empty_Content" = "暂无内容";
+"Gree_Empty_NetError" = "网络异常";

@@ -1,0 +1,92 @@
+source 'https://github.com/CocoaPods/Specs.git'
+source 'git://github.com/CocoaPods/Specs.git'
+
+platform :ios, '12.0'
+project 'QHProjectDemo.xcodeproj'
+inhibit_all_warnings!
+
+flutter_application_path = '/Users/luokun/Documents/iOS/QHProject/project_flutter_demo/flutter_app'
+load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
+
+# 三方组件库
+def third_pods
+  
+  ## OC
+  pod 'Bugly'
+  pod 'MBProgressHUD'
+  #pod 'YYText'
+  ##pod 'YYKit'
+  pod 'FDFullscreenPopGesture'
+  pod 'IQKeyboardManager'
+  #pod 'MLeaksFinder'
+  pod 'MJRefresh'
+
+  ## Swift
+  pod 'CryptoSwift'
+  pod 'Alamofire'
+  pod 'Cache', '5.3.0'
+  pod 'Moya'
+  pod 'SwiftyJSON'
+  pod 'Toast-Swift'
+  pod 'SnapKit'
+  pod 'Kingfisher'
+  ##pod 'ESTabBarController-swift'
+  ##pod 'ObjectMapper'
+  #pod 'PromiseKit'
+  pod 'lottie-ios'
+  pod 'WMPageController'
+  pod 'JXSegmentedView'
+  pod 'RxSwift'
+  pod 'RxCocoa'
+
+  ## 第三方平台
+  #pod 'WechatOpenSDK'
+  #pod 'Tencent-MapSDK'
+  
+end
+
+# 私有组件库
+def qh_private_pods
+  
+end
+
+target 'QHProjectDemo' do
+  third_pods
+  qh_private_pods
+  
+  use_frameworks!
+  install_all_flutter_pods(flutter_application_path)
+end
+
+
+target 'QHProjectDemoUITests' do
+    #pod 'Kiwi'
+end
+
+# Config Pod Targets config
+post_install do |installer|
+  find_and_replace("Pods/FBRetainCycleDetector/FBRetainCycleDetector/Layout/Classes/FBClassStrongLayout.mm",
+        "layoutCache[currentClass] = ivars;", "layoutCache[(id<NSCopying>)currentClass] = ivars;")
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      deployment_target = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+      if deployment_target < '12.0'
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      end
+    end
+  end
+end
+
+def find_and_replace(dir, findstr, replacestr)
+  Dir[dir].each do |name|
+      FileUtils.chmod("+w", name) #add
+      text = File.read(name)
+      replace = text.gsub(findstr,replacestr)
+      if text != replace
+          puts "Fix: " + name
+          File.open(name, "w") { |file| file.puts replace }
+          STDOUT.flush
+      end
+  end
+  Dir[dir + '*/'].each(&method(:find_and_replace))
+end
